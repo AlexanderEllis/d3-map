@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+    }
+    h1 {
+        text-align: center;
+    }
+    #container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+    svg {
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 5px 12px rgba(0,0,0,0.4);
+    }
+    .links line {
+    stroke: #999;
+    stroke-opacity: 0.6;
+    }
+
+    .nodes circle {
+    stroke: #fff;
+    stroke-width: 1.5px;
+    }
+</style>
+<h1>Force-Directed Graph of Country Borders</h1>
+<div id="container">
+    <svg width="900" height="600"></svg>
+</div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="map.js"></script>
