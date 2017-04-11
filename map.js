@@ -87,15 +87,15 @@ Let's take a look at the maximum and minimum transformations allowed
 
 Imagine this is a map that was zoomed in.  The larger rectangle represents the full map, while the small rectangle represents the 'viewport', the html svg on the page that we see through.  The dimensions of the full rectangle will be the scale factor times the original dimensions.
 
-   _________________________
-  |         |               |
-  |         | height        |
-  |_________|               | s * height
-  |  width                  |
-  |                         |
-  |                         |
-  |_________________________|
-          s * width
+                  _________________________
+                  |         |               |
+                  |         | height        |
+                  |_________|               | s * height
+                  |  width                  |
+                  |                         |
+                  |                         |
+                  |_________________________|
+                          s * width
 
 These t values represent the number of pixels the full rectangle is moved relative to the view port, which we can think of as static.  This means that in the above picture, we have moved it x = 0 and y = 0, as the x and y baselines are the same for both pictures.
 
@@ -118,7 +118,7 @@ For the maximums, let's look at another picture.
 
 Here, we've moved the 'viewport' all the way to the right.  We don't want it to move any farther.  This means that we have really moved the large rectangle to the left a distance of the difference between the two rectangle sizes, s * width - width.  We can factor out a width to get width * (s - 1), which gives us the number of pixels we moved the large rectangle to the left.
 
-This means that width * (s - 1) is the max movement to the left.  d3 counts movement to the left as negative, so this really means that the most we can move it is -(width * (s - 1)), or width * (1 - s).
+This means that width * (s - 1) is the max movement to the left.  d3 counts movement to the left as negative (consider how the large rectangle has been shifted with respect to the static viewport), so this really means that the most we can move it is -(width * (s - 1)), or width * (1 - s).
 
 A similar argument for y yields the following expressions.
 
