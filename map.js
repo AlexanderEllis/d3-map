@@ -13,11 +13,11 @@ I can mouse over the meteorite's data point for additional data.
 // Create zoom element
 var zoom = d3.zoom()
   .scaleExtent([1, 9])
-  .on('zoom', move)
+  .on('zoom', move);
 
 // Select svg element and apply zoom
 let svg = d3.select('svg')
-  .call(zoom)
+  .call(zoom);
 
 // Define constants
 let width = +svg.attr('width');
@@ -41,7 +41,7 @@ d3.select('body').append('div')
     .style('visibility', 'hidden')
     .style('text-align', 'center')
     .style('padding', '0 5px 0 5px')
-    .style('border-radius', '4px')
+    .style('border-radius', '4px');
 
 // Create projection
 let projection = d3.geoMercator()
@@ -52,7 +52,7 @@ let path = d3.geoPath().projection(projection);
 
 
 // Add element that we will use to scale
-g = svg.append('g')
+g = svg.append('g');
 
 // Get json information
 d3.json('world-topo-min.json', function(error, world) {
@@ -76,21 +76,21 @@ d3.json('world-topo-min.json', function(error, world) {
           return d.geometry == undefined ? 200 : projection(d.geometry.coordinates)[1]})
         .style('opacity', '0.4')
         .on('mouseover', function(d) {
-          d3.select(this).style('fill', 'white')
+          d3.select(this).style('fill', 'white');
 
           d3.select('.tooltip')
             .html(tooltipFormat(d))
-            .style('visibility', 'visible')
+            .style('visibility', 'visible');
         })
         .on('mousemove', function() {
           d3.select('.tooltip')
             .style('top', (d3.event.pageY - 120) + 'px')
-            .style('left', (d3.event.pageX + 10) + 'px')
+            .style('left', (d3.event.pageX + 10) + 'px');
         })
         .on('mouseleave', function(d) {
-          d3.select(this).style('fill', 'black')
+          d3.select(this).style('fill', 'black');
           d3.select('.tooltip')
-            .style('visibility', 'hidden')
+            .style('visibility', 'hidden');
         })
 
   });
@@ -105,13 +105,9 @@ function drawMap(topo) {
     .attr('d', path)
     .attr('id', d => d.id)
     .attr('title', d => d.properties.name)
-    .attr('fill', d => 'rgb(31,119,180)')
+    .attr('fill', d => 'rgb(31,119,180)');
 }
 
-
-
-
-// move function will be hoisted for zoom assignment
 function move() {
   let t = [d3.event.transform.x, d3.event.transform.y];
   let s = d3.event.transform.k;
@@ -160,8 +156,8 @@ This means that width * (s - 1) is the max movement to the left.  d3 counts move
 A similar argument for y yields the following expressions.
 
 */
-  t[0] = Math.min(0, Math.max(t[0], width * ( 1 - s)))
-  t[1] = Math.min(0, Math.max(t[1], height * ( 1 - s)))
+  t[0] = Math.min(0, Math.max(t[0], width * ( 1 - s)));
+  t[1] = Math.min(0, Math.max(t[1], height * ( 1 - s)));
 
   g.attr('transform', 'translate(' + t + ')scale(' + s + ')');
 
