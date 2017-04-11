@@ -63,6 +63,37 @@ d3.json('world-topo-min.json', function(error, world) {
 
   drawMap(topo);
 
+  d3.json(URL, function(error, data) {
+    g.append("g").attr('class', 'strikes')
+      .selectAll('circle')
+      .data(data.features)
+      .enter().append('circle')
+        .attr('class', 'strike')
+        .attr('r', d =>  Math.pow(+d.properties.mass, 1/10)) // These numbers can be huge, so 10th root.
+        .attr('cx', function(d) {
+          return d.geometry == undefined ? 200 : projection(d.geometry.coordinates)[0]})
+        .attr('cy', function(d) {
+          return d.geometry == undefined ? 200 : projection(d.geometry.coordinates)[1]})
+        .style('opacity', '0.4')
+        .on('mouseover', function(d) {
+          d3.select(this).style('fill', 'white')
+
+          d3.select('.tooltip')
+            .html(tooltipFormat(d))
+            .style('visibility', 'visible')
+        })
+        .on('mousemove', function() {
+          d3.select('.tooltip')
+            .style('top', (d3.event.pageY - 120) + 'px')
+            .style('left', (d3.event.pageX + 10) + 'px')
+        })
+        .on('mouseleave', function(d) {
+          d3.select(this).style('fill', 'black')
+          d3.select('.tooltip')
+            .style('visibility', 'hidden')
+        })
+
+  });
 })
 
 function drawMap(topo) {
@@ -77,37 +108,6 @@ function drawMap(topo) {
     .attr('fill', d => 'rgb(31,119,180)')
 }
 
-d3.json(URL, function(error, data) {
-  g.append("g").attr('class', 'strikes')
-    .selectAll('circle')
-    .data(data.features)
-    .enter().append('circle')
-      .attr('class', 'strike')
-      .attr('r', d =>  Math.pow(+d.properties.mass, 1/10)) // These numbers can be huge, so 10th root.
-      .attr('cx', function(d) {
-        return d.geometry == undefined ? 200 : projection(d.geometry.coordinates)[0]})
-      .attr('cy', function(d) {
-        return d.geometry == undefined ? 200 : projection(d.geometry.coordinates)[1]})
-      .style('opacity', '0.4')
-      .on('mouseover', function(d) {
-        d3.select(this).style('fill', 'white')
-
-        d3.select('.tooltip')
-          .html(tooltipFormat(d))
-          .style('visibility', 'visible')
-      })
-      .on('mousemove', function() {
-        d3.select('.tooltip')
-          .style('top', (d3.event.pageY - 120) + 'px')
-          .style('left', (d3.event.pageX + 10) + 'px')
-      })
-      .on('mouseleave', function(d) {
-        d3.select(this).style('fill', 'black')
-        d3.select('.tooltip')
-          .style('visibility', 'hidden')
-      })
-
-});
 
 
 
