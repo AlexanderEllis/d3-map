@@ -23,6 +23,7 @@ let svg = d3.select('svg')
 let width = +svg.attr('width');
 let height = +svg.attr('height');
 let g;  // Initialize so we can reference in move function
+let URL = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/meteorite-strike-data.json';
 
 
 // Create projection
@@ -33,6 +34,8 @@ let projection = d3.geoMercator()
 let path = d3.geoPath().projection(projection);
 
 
+g = svg.append('g')
+  .on('click', click)
 
 
 // Get json information
@@ -46,8 +49,6 @@ d3.json('world-topo-min.json', function(error, world) {
 })
 
 function drawMap(topo) {
-  g = svg.append('g')
-    .on('click', click)
 
   g.append('path')
     .datum({type: 'LineString', coordinates: [[-180, 0], [-90, 0], [0, 0], [90, 0], [180, 0]]})
@@ -64,6 +65,19 @@ function drawMap(topo) {
     .attr('fill', d => 'rgb(31,119,180)')
 }
 
+d3.json(URL, function(error, data) {
+  g.append("g").attr('class', 'strikes')
+    .selectAll('circle')
+    .data(data.features)
+    .enter().append('circle')
+      .attr('class', 'strike')
+      .attr('r', d =>  1.50)
+      .attr('cx', function(d) {
+        return d.geometry == undefined ? 200 : projection(d.geometry.coordinates)[0]})
+      .attr('cy', function(d) {
+        return d.geometry == undefined ? 200 : projection(d.geometry.coordinates)[1]})
+
+});
 
 
 // Create topojson information
