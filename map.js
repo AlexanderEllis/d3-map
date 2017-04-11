@@ -26,6 +26,23 @@ let g;  // Initialize so we can reference in move function
 let URL = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/meteorite-strike-data.json';
 
 
+// Create tooltip
+d3.select('body').append('div')
+    .attr('class', 'tooltip')
+    .attr('width', '200px')
+    .attr('height', '200px')
+    .style('position', 'absolute')
+    .style('z-index', '10')
+    .style('background-color', '#333')
+    .style('opacity', '0.8')
+    .style('color', 'white')
+    .style('font-size', '14px')
+    .style('font-family', 'sans-serif')
+    .style('visibility', 'hidden')
+    .style('text-align', 'center')
+    .style('padding', '0 5px 0 5px')
+    .style('border-radius', '4px')
+
 // Create projection
 let projection = d3.geoMercator()
     .translate([(width / 2), (height / 2)])
@@ -34,26 +51,21 @@ let projection = d3.geoMercator()
 let path = d3.geoPath().projection(projection);
 
 
+// Add element that we will use to scale
 g = svg.append('g')
-  .on('click', click)
-
 
 // Get json information
 d3.json('world-topo-min.json', function(error, world) {
+
+  // Analyze using topojson
   let countries = topojson.feature(world, world.objects.countries).features;
+  let topo = countries;
 
-  let topo = countries
-
-  drawMap(topo)
+  drawMap(topo);
 
 })
 
 function drawMap(topo) {
-
-  g.append('path')
-    .datum({type: 'LineString', coordinates: [[-180, 0], [-90, 0], [0, 0], [90, 0], [180, 0]]})
-    .attr('class', 'equator')
-    .attr('d', path);
 
   let country = g.selectAll('.country')
     .data(topo)
@@ -71,22 +83,33 @@ d3.json(URL, function(error, data) {
     .data(data.features)
     .enter().append('circle')
       .attr('class', 'strike')
-      .attr('r', d =>  1.50)
+      .attr('r', d =>  Math.pow(+d.properties.mass, 1/10)) // These numbers can be huge, so 10th root.
       .attr('cx', function(d) {
         return d.geometry == undefined ? 200 : projection(d.geometry.coordinates)[0]})
       .attr('cy', function(d) {
         return d.geometry == undefined ? 200 : projection(d.geometry.coordinates)[1]})
+      .style('opacity', '0.4')
+      .on('mouseover', function(d) {
+        d3.select(this).style('fill', 'white')
+
+        d3.select('.tooltip')
+          .html(tooltipFormat(d))
+          .style('visibility', 'visible')
+      })
+      .on('mousemove', function() {
+        d3.select('.tooltip')
+          .style('top', (d3.event.pageY - 120) + 'px')
+          .style('left', (d3.event.pageX + 10) + 'px')
+      })
+      .on('mouseleave', function(d) {
+        d3.select(this).style('fill', 'black')
+        d3.select('.tooltip')
+          .style('visibility', 'hidden')
+      })
 
 });
 
 
-// Create topojson information
-
-// draw map
-
-// Get point information
-
-// draw points
 
 // move function will be hoisted for zoom assignment
 function move() {
@@ -140,13 +163,14 @@ A similar argument for y yields the following expressions.
   t[0] = Math.min(0, Math.max(t[0], width * ( 1 - s)))
   t[1] = Math.min(0, Math.max(t[1], height * ( 1 - s)))
 
-  console.log(t[0])
   g.attr('transform', 'translate(' + t + ')scale(' + s + ')');
 
   d3.selectAll('.country').style('stroke-width', 1.5 / s);
 }
 
-function click() {
-  var latlon = projection.invert(d3.mouse(this));
-  console.log(d3.mouse(this))
+// Template Literal for tooltip html 
+function tooltipFormat(d) {
+    return `<h3> ${d.properties.name} ${ d.properties.year.slice(0, 4)}</h3>
+    <p>Mass: ${d.properties.mass} grams</p>
+    <p>Class: ${d.properties.recclass}</p>` 
 }
